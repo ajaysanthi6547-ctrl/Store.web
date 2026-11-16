@@ -1,0 +1,263 @@
+﻿
+@model Santhi.Store.Models.Order
+
+@{
+    ViewData["Title"] = "My Order Details";
+}
+
+<div class="container mt-5 mb-5">
+
+    <h2 class="mb-4">My Order Details #@Model.OrderId</h2>
+
+    <!-- Success Message -->
+    @if (TempData["OrderMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i>
+            @TempData["OrderMessage"]
+
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Error Message -->
+    @if (TempData["OrderError"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            @TempData["OrderError"]
+
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Order Information -->
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <h5 class="mb-0">Order Information</h5>
+        </div>
+
+        <div class="card-body">
+
+            <p>
+                <strong>Order ID:</strong>
+                #@Model.OrderId
+            </p>
+
+            <p>
+                <strong>Order Date:</strong>
+                @Model.OrderDate.ToString("dd-MM-yyyy hh:mm tt")
+            </p>
+
+            <p>
+                <strong>Order Status:</strong>
+
+                @if (Model.OrderStatus == "Delivered")
+                {
+                    <span class="badge bg-success">@Model.OrderStatus</span>
+                }
+                else if (Model.OrderStatus == "Cancelled")
+                {
+                    <span class="badge bg-danger">@Model.OrderStatus</span>
+                }
+                else if (Model.OrderStatus == "Shipped")
+                {
+                    <span class="badge bg-primary">@Model.OrderStatus</span>
+                }
+                else if (Model.OrderStatus == "Processing")
+                {
+                    <span class="badge bg-info text-dark">@Model.OrderStatus</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">@Model.OrderStatus</span>
+                }
+            </p>
+
+        </div>
+    </div>
+
+    <!-- Delivery Information -->
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <h5 class="mb-0">Delivery Information</h5>
+        </div>
+
+        <div class="card-body">
+
+            <p><strong>Name:</strong> @Model.FullName</p>
+            <p><strong>Mobile:</strong> @Model.MobileNumber</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>City:</strong> @Model.City</p>
+            <p><strong>Pincode:</strong> @Model.Pincode</p>
+
+        </div>
+    </div>
+
+    <!-- Purchased Products -->
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <h5 class="mb-0">Purchased Products</h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.OrderItems != null && Model.OrderItems.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td>₹@item.Price</td>
+                                    <td>@item.Quantity</td>
+                                    <td>₹@item.Subtotal</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    No purchased products found.
+                </div>
+            }
+
+            <h4 class="text-end text-success mt-3">
+                Total Amount: ₹@Model.TotalAmount
+            </h4>
+
+        </div>
+    </div>
+
+    <!-- Order Tracking -->
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Track Your Order</h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.OrderStatus == "Cancelled")
+            {
+                <div class="alert alert-danger mb-0">
+                    <strong>Order Cancelled!</strong>
+                    Your order has been cancelled.
+                </div>
+            }
+            else
+            {
+                var statuses = new[]
+                {
+                    "Pending",
+                    "Processing",
+                    "Shipped",
+                    "Delivered"
+                };
+
+                int currentStage =
+                    Array.IndexOf(statuses, Model.OrderStatus);
+
+                <div class="d-flex justify-content-between text-center flex-wrap">
+
+                    @for (int i = 0; i < statuses.Length; i++)
+                    {
+                        bool completed = i < currentStage;
+                        bool current = i == currentStage;
+
+                        <div class="flex-fill p-2">
+
+                            <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center"
+                                 style="width:45px;
+                                        height:45px;
+                                        background:@(completed || current ? "#198754" : "#dee2e6");
+                                        color:@(completed || current ? "white" : "#333");
+                                        font-weight:bold;">
+
+                                @(completed ? "✓" : (i + 1).ToString())
+
+                            </div>
+
+                            <strong style="font-size:13px;">
+                                @statuses[i]
+                            </strong>
+
+                            <div class="small text-muted">
+                                @(completed ? "Completed" :
+                                  current ? "Current" : "Waiting")
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex gap-2 flex-wrap">
+
+        <a asp-controller="Orders"
+           asp-action="Index"
+           class="btn btn-secondary">
+            ← Back to My Orders
+        </a>
+
+        <a asp-controller="Orders"
+           asp-action="DownloadInvoice"
+           asp-route-id="@Model.OrderId"
+           class="btn btn-success">
+            <i class="bi bi-file-earmark-pdf"></i>
+            Download Invoice
+        </a>
+
+        @if (Model.OrderStatus == "Pending")
+        {
+            <form asp-controller="Orders"
+                  asp-action="Cancel"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="id"
+                       value="@Model.OrderId" />
+
+                <button type="submit"
+                        class="btn btn-danger"
+                        onclick="return confirm('Are you sure you want to cancel this order?');">
+                    Cancel Order
+                </button>
+
+            </form>
+        }
+
+    </div>
+
+</div>

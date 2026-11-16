@@ -1,0 +1,132 @@
+﻿@model Santhi.Store.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-5 mb-5">
+
+    <h2 class="mb-4">Order Details #@Model.OrderId</h2>
+
+   
+@if (TempData["OrderMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show"
+         role="alert">
+
+        <i class="bi bi-check-circle-fill"></i>
+        @TempData["OrderMessage"]
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close">
+        </button>
+
+    </div>
+}
+
+
+    <!-- Customer Information -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Customer Information</h5>
+        </div>
+
+        <div class="card-body">
+            <p><strong>Name:</strong> @Model.FullName</p>
+            <p><strong>Mobile:</strong> @Model.MobileNumber</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>City:</strong> @Model.City</p>
+            <p><strong>Pincode:</strong> @Model.Pincode</p>
+            <p><strong>Order Date:</strong> @Model.OrderDate.ToString("dd-MM-yyyy hh:mm tt")</p>
+            <p><strong>Order Status:</strong> @Model.OrderStatus</p>
+
+            <form asp-controller="Admin"
+      asp-action="UpdateOrderStatus"
+      method="post">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" value="@Model.OrderId" />
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Update Order Status</strong></label>
+
+        <select name="status" class="form-select">
+            <option value="Pending">Pending</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Update Status
+    </button>
+
+</form>
+
+        </div>
+    </div>
+
+    <!-- Purchased Products -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Purchased Products</h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.OrderItems != null && Model.OrderItems.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td>₹@item.Price</td>
+                                    <td>@item.Quantity</td>
+                                    <td>₹@item.Subtotal</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    No product details found for this order.
+                </div>
+            }
+
+            <h4 class="text-end text-success">
+                Total: ₹@Model.TotalAmount
+            </h4>
+
+        </div>
+    </div>
+
+    <a asp-controller="Admin"
+       asp-action="Orders"
+       class="btn btn-secondary">
+        ← Back to Orders
+    </a>
+
+</div>

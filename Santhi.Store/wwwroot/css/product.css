@@ -1,0 +1,94 @@
+﻿
+/* ===== Santhi.Store Premium Product Design ===== */
+
+.product-grid {
+    margin-top: 20px;
+}
+
+.product-card {
+    background: #ffffff;
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    height: 100%;
+    box-shadow: 0 4px 15px rgba(50, 20, 84, 0.10);
+    transition: all 0.3s ease;
+}
+
+    .product-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 12px 28px rgba(50, 20, 84, 0.18);
+    }
+
+    .product-card .product-image {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        background: #f8f5fc;
+        transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.04);
+    }
+
+    .product-card .card-body {
+        padding: 18px;
+    }
+
+    .product-card .card-title {
+        color: #321354;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .product-card .product-price {
+        color: #57258b;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    .product-card .product-category {
+        color: #777;
+        font-size: 13px;
+    }
+
+    .product-card .product-rating {
+        color: #e5a000;
+        font-weight: 600;
+    }
+
+    .product-card .btn-product {
+        background: linear-gradient(100deg, #482078, #7138a5);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px;
+        font-weight: 600;
+    }
+
+        .product-card .btn-product:hover {
+            background: #321354;
+            color: white;
+        }
+
+    .product-card .btn-details {
+        border: 1px solid #57258b;
+        color: #57258b;
+        border-radius: 10px;
+    }
+
+        .product-card .btn-details:hover {
+            background: #57258b;
+            color: white;
+        }
+
+@media (max-width: 576px) {
+    .product-card .product-image {
+        height: 190px;
+    }
+
+    .product-card .card-body {
+        padding: 14px;
+    }
+}

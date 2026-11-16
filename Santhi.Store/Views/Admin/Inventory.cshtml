@@ -1,0 +1,129 @@
+﻿
+@model IEnumerable<Santhi.Store.Models.Product>
+
+@{
+    ViewData["Title"] = "Inventory Management";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Inventory Management</h2>
+
+    @if (TempData["StockMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert">
+
+            <i class="bi bi-check-circle-fill"></i>
+            @TempData["StockMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+
+        </div>
+    }
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Available Stock</th>
+                    <th>Stock Status</th>
+                    <th>Update Stock</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.ProductId</td>
+                            <td>@product.ProductName</td>
+                            <td>@product.Category</td>
+                            <td>₹@product.Price</td>
+                            <td>@product.Stock</td>
+
+                            <td>
+                                @if (product.Stock == 0)
+                                {
+                                    <span class="badge bg-danger">
+                                        Out of Stock
+                                    </span>
+                                }
+                                else if (product.Stock < 10)
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        Low Stock
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">
+                                        Available
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                <form asp-controller="Admin"
+                                      asp-action="UpdateStock"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@product.ProductId" />
+
+                                    <input type="number"
+                                           name="newStock"
+                                           value="@product.Stock"
+                                           min="0"
+                                           class="form-control mb-2"
+                                           required />
+
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        Update
+                                    </button>
+
+                                </form>
+                            </td>
+
+                        </tr>
+                    }
+                }
+
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            No products found.
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+        @if (TempData["StockMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["StockMessage"]
+            </div>
+        }
+    </div>
+
+</div>
+

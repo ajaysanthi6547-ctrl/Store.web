@@ -1,0 +1,116 @@
+﻿@model Santhi.Store.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Customer Registration";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card shadow p-4">
+
+                @if (TempData["RegistrationRequired"] != null)
+                {
+                    <div class="alert alert-warning text-center">
+                        <strong>Registration Required!</strong>
+                        <p class="mb-0">
+                            @TempData["RegistrationRequired"]
+                        </p>
+                    </div>
+                }
+
+                <h2 class="text-center mb-4">
+                    Create Your Account
+                </h2>
+
+                <form asp-controller="Account"
+                      asp-action="Register"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="All"
+                         class="text-danger mb-3">
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName"
+                               class="form-label">
+                            Full Name
+                        </label>
+
+                        <input asp-for="FullName"
+                               class="form-control"
+                               placeholder="Enter your full name" />
+
+                        <span asp-validation-for="FullName"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email"
+                               class="form-label">
+                            Email Address
+                        </label>
+
+                        <input asp-for="Email"
+                               class="form-control"
+                               placeholder="Enter your email" />
+
+                        <span asp-validation-for="Email"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password"
+                               class="form-label">
+                            Password
+                        </label>
+
+                        <input asp-for="Password"
+                               class="form-control"
+                               placeholder="Enter password" />
+
+                        <span asp-validation-for="Password"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword"
+                               class="form-label">
+                            Confirm Password
+                        </label>
+
+                        <input asp-for="ConfirmPassword"
+                               class="form-control"
+                               placeholder="Confirm password" />
+
+                        <span asp-validation-for="ConfirmPassword"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-success w-100">
+                        Register
+                    </button>
+
+                </form>
+
+                <p class="text-center mt-3 mb-0">
+                    Already have an account?
+
+                    <a asp-controller="Account"
+                       asp-action="Login">
+                        Login
+                    </a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>

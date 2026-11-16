@@ -1,0 +1,277 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Santhi.Store</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Style.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="~/manifest.json" />
+
+    <meta name="theme-color" content="#0d6efd" />
+</head>
+
+<body>
+
+    <!-- Santhi.Store PWA Install Banner -->
+    <div id="installBanner"
+         style="display:none; background:#0d6efd; color:white;
+        padding:12px 15px; text-align:center;">
+
+        <span>Install Santhi.Store on your device!</span>
+
+        <button id="installButton"
+                class="btn btn-warning btn-sm ms-2">
+            Install Now
+        </button>
+
+        <button id="closeInstallBanner"
+                class="btn btn-light btn-sm ms-2">
+            ✕
+        </button>
+    </div>
+
+  
+@if (ViewContext.RouteData.Values["controller"]?.ToString() != "Home")
+{
+    <nav class="navbar navbar-expand-lg navbar-dark store-navbar">
+
+        <div class="container">
+
+            <a class="navbar-brand store-brand"
+               asp-controller="Home"
+               asp-action="Index">
+
+                <img src="~/images/santhi-logo.png"
+                     alt="Santhi.Store"
+                     class="site-logo" />
+
+                <span>Santhi.Store</span>
+            </a>
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar">
+
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse"
+                 id="mainNavbar">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           asp-controller="Product"
+                           asp-action="Index">
+                            Products
+                        </a>
+                    </li>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Admin"
+                                   asp-action="Index">
+                                    Admin Dashboard
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Customer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link nav-highlight"
+                                   asp-controller="Cart"
+                                   asp-action="Index">
+                                    🛒 My Cart
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Orders"
+                                   asp-action="Index">
+                                    My Orders
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link nav-highlight"
+                                   asp-controller="Wishlist"
+                                   asp-action="Index">
+                                    ❤️ Wishlist
+                                </a>
+                            </li>
+                        }
+
+                        <li class="nav-item ms-lg-2">
+                            <form asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post">
+
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="nav-link logout-btn">
+                                    Logout
+                                </button>
+
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Account"
+                               asp-action="Login">
+                                Login
+                            </a>
+                        </li>
+
+                        <li class="nav-item ms-lg-2">
+                            <a class="nav-link register-btn"
+                               asp-controller="Account"
+                               asp-action="Register">
+                                Register
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+}
+
+    <!-- Main Page Content -->
+    @RenderBody()
+
+    <!-- Bootstrap -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="~/js/script.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+
+            if ("serviceWorker" in navigator) {
+
+                window.addEventListener("load", function () {
+
+                    navigator.serviceWorker.register("/service-worker.js")
+                        .then(function (registration) {
+
+                            console.log("Santhi.Store Service Worker registered!");
+
+                        })
+                        .catch(function (error) {
+
+                            console.error("Service Worker registration failed:", error);
+
+                        });
+
+                });
+
+            }
+
+    </script>
+
+    <!-- PWA Installation Script -->
+    <script>
+
+            let deferredInstallPrompt = null;
+
+            const installBanner = document.getElementById("installBanner");
+            const installButton = document.getElementById("installButton");
+            const closeInstallBanner = document.getElementById("closeInstallBanner");
+
+            // Detect whether browser supports PWA installation
+            window.addEventListener("beforeinstallprompt", function (event) {
+
+                event.preventDefault();
+
+                deferredInstallPrompt = event;
+
+                // Show banner if not previously dismissed
+                if (localStorage.getItem("installBannerClosed") !== "yes") {
+
+                    installBanner.style.display = "block";
+
+                }
+
+            });
+
+            // Install button click
+            installButton.addEventListener("click", async function () {
+
+                if (!deferredInstallPrompt) {
+                    return;
+                }
+
+                deferredInstallPrompt.prompt();
+
+                const result = await deferredInstallPrompt.userChoice;
+
+                if (result.outcome === "accepted") {
+
+                    console.log("Santhi.Store installation accepted");
+
+                }
+
+                deferredInstallPrompt = null;
+
+                installBanner.style.display = "none";
+
+            });
+
+            // Close installation banner
+            closeInstallBanner.addEventListener("click", function () {
+
+                installBanner.style.display = "none";
+
+                localStorage.setItem("installBannerClosed", "yes");
+
+            });
+
+            // Detect successful installation
+            window.addEventListener("appinstalled", function () {
+
+                installBanner.style.display = "none";
+
+                localStorage.removeItem("installBannerClosed");
+
+                console.log("Santhi.Store installed successfully!");
+
+            });
+
+    </script>
+
+</body>
+</html>

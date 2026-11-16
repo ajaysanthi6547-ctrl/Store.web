@@ -1,0 +1,324 @@
+﻿@using Santhi.Store.Extensions
+@using Santhi.Store.Models
+
+@model List<Santhi.Store.Models.Product>
+
+@{
+    ViewData["Title"] = "TrendKart - Online Shopping";
+
+    // Get cart details from Session
+    var cart = Context.Session.GetObject<List<CartItem>>("Cart");
+
+    // Calculate total cart quantity
+    var cartCount = cart?.Sum(item => item.Quantity) ?? 0;
+}
+
+<!-- Announcement Bar -->
+<div class="top-bar">
+    Free Delivery on Orders Above ₹499!
+</div>
+
+
+<!-- DESKTOP HEADER - ORIGINAL DESIGN -->
+<div class="desktop-header">
+
+    <header class="header">
+        <a class="logo" href="/">Trend<span>Kart</span></a>
+
+        <form asp-controller="Home" asp-action="Search"
+              method="get" class="search-box">
+
+            <span class="search-icon">🔍</span>
+
+            <input type="text"
+                   name="searchTerm"
+                   value="@Context.Request.Query["searchTerm"]"
+                   placeholder="Search for products..."
+                   required />
+
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="header-actions">
+
+            <a asp-controller="Account" asp-action="Login"
+               class="hbtn hbtn-ghost">
+                👤 <span class="hide-sm">Login</span>
+            </a>
+
+            <a asp-controller="Account" asp-action="Register"
+               class="hbtn hbtn-solid">
+                Sign up
+            </a>
+
+            <a asp-controller="Cart" asp-action="Index"
+               class="hbtn hbtn-cart" aria-label="Cart">
+                🛒 <span class="hide-sm">Cart</span>
+                <span class="cart-badge">@cartCount</span>
+            </a>
+
+        </div>
+    </header>
+
+</div>
+
+
+<!-- MOBILE HEADER - NEW DMART STYLE -->
+<div class="mobile-header">
+
+    <header class="tk-header">
+
+        <div class="tk-header-top">
+
+            <button class="tk-menu-btn" type="button"
+                    onclick="document.querySelector('.main-nav').classList.toggle('mobile-open')">
+                ☰
+            </button>
+
+            <a class="tk-logo" href="/">
+                Trend<span>Kart</span>
+            </a>
+
+            <div class="tk-actions">
+
+                <a asp-controller="Account"
+                   asp-action="Login" class="tk-icon">
+                    👤
+                </a>
+
+                <a asp-controller="Account"
+                   asp-action="Register" class="tk-signup">
+                    Sign up
+                </a>
+
+                <a asp-controller="Cart"
+                   asp-action="Index" class="tk-cart">
+                    🛒
+                    <span class="cart-badge">@cartCount</span>
+                </a>
+
+            </div>
+        </div>
+
+        <form asp-controller="Home"
+              asp-action="Search"
+              method="get" class="tk-search">
+
+            <span>🔍</span>
+
+            <input type="text"
+                   name="searchTerm"
+                   value="@Context.Request.Query["searchTerm"]"
+                   placeholder="Search for products..."
+                   required />
+
+            <button type="submit">Search</button>
+
+        </form>
+
+    </header>
+
+</div>
+
+<!-- Navigation -->
+<nav class="navbar main-nav">
+    <a href="#" class="active">Home</a>
+    <a href="#categories">Categories</a>
+    <a asp-controller="Home" asp-action="Search" asp-route-searchTerm="Groceries">Groceries</a>
+    <a asp-controller="Home" asp-action="Search" asp-route-searchTerm="Snacks">Snacks</a>
+    <a asp-controller="Home" asp-action="Search" asp-route-searchTerm="Beverages">Beverages</a>
+    <a href="#offers" class="nav-offers">Offers <em>HOT</em></a>
+</nav>
+
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <p class="tagline">FRESHNESS AT YOUR DOORSTEP</p>
+
+        <h1>
+            Everything You Need,<br>
+            <span class="hl">All in One Place!</span>
+        </h1>
+
+        <p class="hero-text">
+            Shop groceries, snacks and daily essentials
+            at the best prices.
+        </p>
+
+        <div class="hero-cta">
+            <a href="#products" class="shop-btn">Shop Now →</a>
+            <a href="#offers" class="shop-btn-outline">View Offers</a>
+        </div>
+
+        <ul class="hero-badges">
+            <li>🚚 Fast delivery</li>
+            <li>🌿 Fresh guarantee</li>
+          
+        </ul>
+    </div>
+
+    <!--
+        Hero visual. To use a real photo instead, replace this whole block with:
+        <div class="hero-visual"><img src="~/images/hero.png" alt="Fresh groceries" /></div>
+    -->
+    <div class="hero-visual" aria-hidden="true">
+        <div class="hero-circle"></div>
+        <span class="float f1">🥦</span>
+        <span class="float f2">🍎</span>
+        <span class="float f3">🥛</span>
+        <span class="float f4">🍪</span>
+        <span class="float f5">🥕</span>
+        <span class="float f6">🍌</span>
+        <div class="hero-pill">Up to 20% OFF today</div>
+    </div>
+</section>
+
+
+<!-- Categories -->
+<section class="section" id="categories">
+
+    <h2>Shop by Category</h2>
+    <p class="subtitle">Explore our popular categories</p>
+
+    <div class="category-grid">
+
+        <a asp-controller="Product" asp-action="Index"
+           asp-route-category="Vegetables" class="category-card">
+            <div class="category-icon">🥦</div>
+            <h3>Vegetables</h3>
+        </a>
+
+        <a asp-controller="Product" asp-action="Index"
+           asp-route-category="Fruits" class="category-card">
+            <div class="category-icon">🍎</div>
+            <h3>Fruits</h3>
+        </a>
+
+        <a asp-controller="Product" asp-action="Index"
+           asp-route-category="Snacks" class="category-card">
+            <div class="category-icon">🍪</div>
+            <h3>Snacks</h3>
+        </a>
+
+        <a asp-controller="Product" asp-action="Index"
+           asp-route-category="Dairy" class="category-card">
+            <div class="category-icon">🥛</div>
+            <h3>Dairy</h3>
+        </a>
+
+        <a asp-controller="Product" asp-action="Index"
+           asp-route-category="Beverages" class="category-card">
+            <div class="category-icon">🥤</div>
+            <h3>Beverages</h3>
+        </a>
+
+        <a asp-controller="Product" asp-action="Index"
+           asp-route-category="Groceries" class="category-card">
+            <div class="category-icon">🍚</div>
+            <h3>Groceries</h3>
+        </a>
+
+    </div>
+</section>
+
+
+
+<!-- Products -->
+<section class="section" id="products">
+
+    <h2>Trending Products</h2>
+    <p class="subtitle">Our popular picks for you</p>
+
+    <div class="product-grid">
+
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var product in Model)
+            {
+                <div class="product-card">
+
+                    <img src="@product.ImageUrl"
+                         alt="@product.ProductName">
+
+                    <h3>@product.ProductName</h3>
+
+                    <p class="price">
+                        ₹@product.Price
+                    </p>
+
+                    <p>@product.Category</p>
+
+                    <a asp-controller="Product"
+                       asp-action="Details"
+                       asp-route-id="@product.ProductId"
+                       class="btn btn-success">
+                        View Details
+                    </a>
+
+                    <form asp-controller="Cart"
+                          asp-action="AddToCart"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@product.ProductId" />
+
+                        <button type="submit" class="btn btn-primary mt-2">
+                            Add to Cart
+                        </button>
+                    </form>
+
+                </div>
+            }
+        }
+        else
+        {
+            <p>No products available currently.</p>
+        }
+
+    </div>
+
+</section>
+
+
+<!-- Offers -->
+<section class="offer-section" id="offers">
+
+    <h2>Special Shopping Offer!</h2>
+
+    <p>Get up to 20% OFF on selected products.</p>
+
+    <a href="#products">Explore Offers</a>
+
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-grid">
+        <div>
+            <h2 class="footer-logo">Trend<span>Kart</span></h2>
+            <p>Your everyday shopping partner.</p>
+        </div>
+        <div>
+            <h4>Shop</h4>
+            <a href="#categories">Categories</a>
+            <a href="#products">Trending</a>
+            <a href="#offers">Offers</a>
+        </div>
+        <div>
+            <h4>Account</h4>
+            <a asp-controller="Account" asp-action="Login">Login</a>
+            <a asp-controller="Account" asp-action="Register">Register</a>
+            <a asp-controller="Cart" asp-action="Index">Cart</a>
+        </div>
+        <div>
+            <h4>Contact</h4>
+            <p>📧 support@trendkart.com</p>
+            <p>📞 +91 9585609278</p>
+        </div>
+    </div>
+    <p class="copyright">© 2026 TrendKart. All Rights Reserved.</p>
+</footer>

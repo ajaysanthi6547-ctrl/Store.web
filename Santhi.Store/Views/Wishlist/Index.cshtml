@@ -1,0 +1,95 @@
+﻿
+@model List<Santhi.Store.Models.WishlistItem>
+
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">❤️ My Wishlist</h2>
+
+    @if (TempData["WishlistMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["WishlistMessage"]
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            Your wishlist is empty.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+
+                        <img src="@item.Product.ImageUrl"
+                             class="card-img-top"
+                             style="height:200px; object-fit:contain;"
+                             alt="@item.Product.ProductName" />
+
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @item.Product.ProductName
+                            </h5>
+
+                            <p class="text-success fw-bold">
+                                ₹@item.Product.Price
+                            </p>
+
+                            <a asp-controller="Product"
+                               asp-action="Details"
+                               asp-route-id="@item.ProductId"
+                               class="btn btn-primary">
+                                View Product
+                            </a>
+
+                                <form asp-controller="Wishlist"
+                                      asp-action="Remove"
+                                      method="post"
+                                      class="mt-2">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@item.WishlistItemId" />
+
+                                    <button type="submit" class="btn btn-danger">
+                                        ❤️ Remove from Wishlist
+                                    </button>
+
+                                    
+                                    
+                                  <form asp-controller="Cart"
+                                          asp-action="AddToCart"
+                                          method="post">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.ProductId" />
+
+                                        <button type="submit" class="btn btn-success w-100">
+                                            🛒 Move to Cart
+                                        </button>
+
+                                    </form>
+
+
+                                </form>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

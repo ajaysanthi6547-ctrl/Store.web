@@ -1,0 +1,121 @@
+﻿@model Santhi.Store.Models.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+
+    var cart = ViewBag.Cart as List<Santhi.Store.Models.CartItem>
+               ?? new List<Santhi.Store.Models.CartItem>();
+
+    decimal total = cart.Sum(item => item.Price * item.Quantity);
+}
+
+<div class="container mt-5 mb-5">
+
+    <h2 class="mb-4">Checkout</h2>
+
+    <div class="row">
+
+        <!-- Order Summary -->
+        <div class="col-md-5 order-md-2 mb-4">
+
+            <h4>Your Order</h4>
+
+            <div class="card p-3">
+
+                @foreach (var item in cart)
+                {
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>@item.ProductName × @item.Quantity</span>
+                        <strong>₹@(item.Price * item.Quantity)</strong>
+                    </div>
+                }
+
+                <hr />
+
+                <div class="d-flex justify-content-between">
+                    <h5>Total</h5>
+                    <h5 class="text-success">₹@total</h5>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="col-md-7 order-md-1">
+
+            <h4 class="mb-3">Delivery Address</h4>
+
+            <form asp-controller="Checkout"
+                  asp-action="PlaceOrder"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label"></label>
+                    <input asp-for="FullName" class="form-control"
+                           placeholder="Enter your full name" />
+                    <span asp-validation-for="FullName"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MobileNumber" class="form-label"></label>
+                    <input asp-for="MobileNumber" class="form-control"
+                           placeholder="Enter mobile number" />
+                    <span asp-validation-for="MobileNumber"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control"
+                           placeholder="Enter email address" />
+                    <span asp-validation-for="Email"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label"></label>
+                    <textarea asp-for="Address" class="form-control"
+                              rows="3"
+                              placeholder="House number, street, area"></textarea>
+                    <span asp-validation-for="Address"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="City" class="form-label"></label>
+                        <input asp-for="City" class="form-control"
+                               placeholder="City" />
+                        <span asp-validation-for="City"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Pincode" class="form-label"></label>
+                        <input asp-for="Pincode" class="form-control"
+                               placeholder="6-digit pincode" />
+                        <span asp-validation-for="Pincode"
+                              class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100">
+                    Place Order
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

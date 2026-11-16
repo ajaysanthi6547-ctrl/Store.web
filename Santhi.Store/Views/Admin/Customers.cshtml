@@ -1,0 +1,164 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+
+@{
+    ViewData["Title"] = "Customer Management";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Customer Management</h2>
+
+    @if (TempData["CustomerMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["CustomerMessage"]
+        </div>
+    }
+
+    <form asp-controller="Admin"
+          asp-action="Customers"
+          method="get"
+          class="mb-4">
+
+        <div class="input-group">
+
+            <input type="text"
+                   name="searchTerm"
+                   value="@ViewBag.SearchTerm"
+                   class="form-control"
+                   placeholder="Search by username or email..." />
+
+            <button type="submit" class="btn btn-primary">
+                Search
+            </button>
+
+            <a asp-controller="Admin"
+               asp-action="Customers"
+               class="btn btn-secondary">
+                Clear
+            </a>
+
+        </div>
+    </form>
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-striped">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Phone Number</th>
+                    <th>Account Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var customer in Model)
+                    {
+                        var isDeactivated =
+                            customer.LockoutEnabled &&
+                            customer.LockoutEnd.HasValue &&
+                            customer.LockoutEnd.Value == DateTimeOffset.MaxValue;
+
+                        <tr>
+                            <td>@customer.Id</td>
+
+                            <td>@customer.Email</td>
+
+                            <td>@customer.UserName</td>
+
+                            <td>
+                                @(customer.PhoneNumber ?? "Not Provided")
+                            </td>
+
+                            <td>
+                                @if (isDeactivated)
+                                {
+                                    <span class="badge bg-danger">
+                                        Deactivated
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                <a asp-controller="Admin"
+                                   asp-action="CustomerDetails"
+                                   asp-route-id="@customer.Id"
+                                   class="btn btn-info btn-sm mb-1">
+                                    View Details
+                                </a>
+
+                                @if (isDeactivated)
+                                {
+                                    <form asp-controller="Admin"
+                                          asp-action="ActivateCustomer"
+                                          method="post"
+                                          class="d-inline">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@customer.Id" />
+
+                                        <button type="submit"
+                                                class="btn btn-success btn-sm mb-1">
+                                            Activate
+                                        </button>
+
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Admin"
+                                          asp-action="DeactivateCustomer"
+                                          method="post"
+                                          class="d-inline">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@customer.Id" />
+
+                                        <button type="submit"
+                                                class="btn btn-danger btn-sm mb-1"
+                                                onclick="return confirm('Are you sure you want to deactivate this customer?');">
+                                            Deactivate
+                                        </button>
+
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            No customers found.
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

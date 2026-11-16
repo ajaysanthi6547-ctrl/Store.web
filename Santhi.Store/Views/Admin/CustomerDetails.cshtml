@@ -1,0 +1,77 @@
+﻿@model Microsoft.AspNetCore.Identity.IdentityUser
+
+@{
+    ViewData["Title"] = "Customer Details";
+
+    var orders = ViewBag.CustomerOrders
+        as List<Santhi.Store.Models.Order>;
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Customer Details</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4>Customer Information</h4>
+            <hr />
+
+            <p><strong>Customer ID:</strong> @Model.Id</p>
+            <p><strong>Username:</strong> @Model.UserName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Phone:</strong> @(Model.PhoneNumber ?? "Not Provided")</p>
+
+        </div>
+    </div>
+
+    <h4 class="mb-3">Customer Order History</h4>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Order Date</th>
+                    <th>Total Amount</th>
+                    <th>Order Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @if (orders != null && orders.Any())
+                {
+                    foreach (var order in orders)
+                    {
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.OrderDate.ToString("dd-MM-yyyy")</td>
+                            <td>₹@order.TotalAmount</td>
+                            <td>@order.OrderStatus</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No orders found for this customer.
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+
+    <a asp-controller="Admin"
+       asp-action="Customers"
+       class="btn btn-secondary mt-3">
+        Back to Customers
+    </a>
+
+</div>
+
